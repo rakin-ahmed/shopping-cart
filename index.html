@@ -25,12 +25,12 @@
 
                      <div class="col-md-5 center-item">
                         <div class="input-group number-spinner">
-                           <button class="btn btn-default"><i class="fas fa-minus"></i></button>
-                           <input type="text" class="form-control text-center" value="1">
-                           <button class="btn btn-default"><i class="fas fa-plus"></i></button>
+                           <button id="mobileMinus" class="btn btn-default"><i class="fas fa-minus"></i></button>
+                           <input disabled autocomplete="off" id="mobileQuantity" type="text" class="form-control text-center" value="0">
+                           <button id="mobilePlus" class="btn btn-default"><i class="fas fa-plus"></i></button>
                         </div>
-                        <h5>$1219</h5>
-                        <img src="images/remove.png" alt="" class="remove-item">
+                        <h5>$ <span id="mobileTotal">0</span></h5>
+                        <img id="mobileRemove" src="images/remove.png" alt="" class="remove-item">
                      </div>
                   </div>
                </div>
@@ -43,40 +43,134 @@
                      </div>
                      <div class="col-md-5 center-item">
                         <div class="input-group number-spinner">
-                           <button class="btn btn-default"><i class="fas fa-minus"></i></button>
-                           <input type="text" class="form-control text-center" value="1">
-                           <button class="btn btn-default"><i class="fas fa-plus"></i></button>
-
+                           <button id="caseMinus" class="btn btn-default"><i class="fas fa-minus"></i></button>
+                           <input disabled autocomplete="off" id="caseQuantity" type="text" class="form-control text-center" value="0">
+                           <button id="casePlus" class="btn btn-default"><i class="fas fa-plus"></i></button>
                         </div>
-                        <h5>$59</h5>
-                        <img src="images/remove.png" alt="" class="remove-item">
+                        <h5>$ <span id="caseTotal">0</span></h5>
+                        <img id="caseRemove" src="images/remove.png" alt="" class="remove-item">
                      </div>
                   </div>
                </div>
 
                <div class="cart-item">
                   <div class="row">
-
                      <div class="col-md-8">
                         <h5>Subtotal: </h5>
-                        <h5>Tax:</h5>
+                        <h5>Tax (<span id="taxPercentage"></span>%):</h5>
                         <h5>Total:</h5>
                      </div>
-
                      <div class="col-md-4 status">
-                        <h5>$1,278</h5>
-                        <h5>$0</h5>
-                        <h5>$1,278</h5>
+                        <h5>$ <span id="subTotal">0</span></h5>
+                        <h5>$ <span id="tax">0</span></h5>
+                        <h5>$ <span id="totalAmount">0</span></h5>
                      </div>
                   </div>
                </div>
                <div class="col-md-12 pt-4 pb-4">
-                  <button type="button" class="btn btn-success check-out">Check Out</button>
+                  <button id="checkout" type="button" class="btn btn-success check-out">Check Out</button>
                </div>
             </div>
          </div>
       </div>
    </section>
+
+   <script>
+      // all data
+      const mobilePrice = 1219
+      const casePrice = 59
+      const taxPercentage = 7.5
+      document.getElementById('taxPercentage').innerText = taxPercentage
+      const taxValue = taxPercentage / 100
+
+      // plus button event handler
+      const mobilePlusBtn = document.getElementById('mobilePlus');
+      mobilePlusBtn.addEventListener('click', function () {
+         plusBtn('mobileQuantity', 'mobileTotal', 'caseTotal', 'subTotal', 'tax', 'totalAmount', mobilePrice)
+      })
+      const casePlusBtn = document.getElementById('casePlus');
+      casePlusBtn.addEventListener('click', function () {
+         plusBtn('caseQuantity', 'caseTotal', 'mobileTotal', 'subTotal', 'tax', 'totalAmount', casePrice)
+      })
+
+      // minus button event handler
+      const mobileMinusBtn = document.getElementById('mobileMinus');
+      mobileMinusBtn.addEventListener('click', function () {
+         minusBtn('mobileQuantity', 'mobileTotal', 'caseTotal', 'subTotal', 'tax', 'totalAmount', mobilePrice)
+      })
+
+      const caseMinusBtn = document.getElementById('caseMinus');
+      caseMinusBtn.addEventListener('click', function () {
+         minusBtn('caseQuantity', 'caseTotal', 'mobileTotal', 'subTotal', 'tax', 'totalAmount', casePrice)
+      })
+
+      // remove event handler
+      const mobileRemoveBtn = document.getElementById('mobileRemove');
+      mobileRemoveBtn.addEventListener('click', function () {
+         removeAll('mobileQuantity', 'mobileTotal', 'caseTotal', 'subTotal', 'tax', 'totalAmount')
+      })
+      
+      const caseRemoveBtn = document.getElementById('caseRemove')
+      caseRemoveBtn.addEventListener('click', function () {
+         removeAll('caseQuantity', 'caseTotal', 'mobileTotal', 'subTotal', 'tax', 'totalAmount')
+      })
+
+      // checkout event handler
+      const checkout=document.getElementById('checkout')
+      checkout.addEventListener('click',function () {
+         alert('Thanks for your order. we will get back to you soon inshaAllah')
+      })
+
+      // all function
+      function plusBtn(id1, id2, id3, id4, id5, id6, price) {
+         const quantity = document.getElementById(id1).value
+         const newQuantity = parseFloat(quantity) + 1
+         if (newQuantity > 10) {
+            alert('You can not purchase more than 10')
+            newQuantity = 10
+         }
+         document.getElementById(id1).value = newQuantity
+         const thisTotal = newQuantity * price
+         document.getElementById(id2).innerText = thisTotal
+         const otherTotal = document.getElementById(id3).innerText
+         const subTotal = thisTotal + parseFloat(otherTotal)
+         document.getElementById(id4).innerText = subTotal
+         const taxTotal = subTotal * taxValue
+         document.getElementById(id5).innerText = taxTotal
+         const totalAmount = subTotal + taxTotal
+         document.getElementById(id6).innerText = totalAmount
+      }
+
+      function minusBtn(id1, id2, id3, id4, id5, id6, price) {
+         const quantity = document.getElementById(id1).value
+         const newQuantity = parseFloat(quantity) - 1
+         if (newQuantity < 0) {
+            newQuantity = 0
+         }
+         document.getElementById(id1).value = newQuantity
+         const thisTotal = newQuantity * price
+         document.getElementById(id2).innerText = thisTotal
+         const otherTotal = document.getElementById(id3).innerText
+         const subTotal = thisTotal + parseFloat(otherTotal)
+         document.getElementById(id4).innerText = subTotal
+         const taxTotal = subTotal * taxValue
+         document.getElementById(id5).innerText = taxTotal
+         const totalAmount = subTotal + taxTotal
+         document.getElementById(id6).innerText = totalAmount
+      }
+
+      function removeAll(id1, id2, id3, id4, id5, id6, price) {
+         document.getElementById(id1).value =0
+         document.getElementById(id2).innerText =0
+         const otherTotal = document.getElementById(id3).innerText
+         const subTotal = parseFloat(otherTotal)
+         document.getElementById(id4).innerText = subTotal
+         const taxTotal = subTotal * taxValue
+         document.getElementById(id5).innerText = taxTotal
+         const totalAmount = subTotal + taxTotal
+         document.getElementById(id6).innerText = totalAmount
+      }
+   </script>
 </body>
 
 </html>
